@@ -2,7 +2,15 @@
 export default {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: [],
+        custom: ["Montserrat", "serif"],
+      },
+      colors: {
+        lightGrey: "#f4f7fa",
+      },
+    },
   },
   plugins: [],
 };
