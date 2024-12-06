@@ -321,6 +321,7 @@ export type Database = {
           id: number
           password: string
           recipe_book_name: string | null
+          role: string | null
           user_name: string
         }
         Insert: {
@@ -329,6 +330,7 @@ export type Database = {
           id?: number
           password: string
           recipe_book_name?: string | null
+          role?: string | null
           user_name: string
         }
         Update: {
@@ -337,6 +339,7 @@ export type Database = {
           id?: number
           password?: string
           recipe_book_name?: string | null
+          role?: string | null
           user_name?: string
         }
         Relationships: []

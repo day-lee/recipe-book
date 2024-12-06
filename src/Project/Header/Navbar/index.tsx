@@ -1,5 +1,7 @@
-import React, { useState } from "react";
 import { Link } from "react-router-dom";
+
+import React, { useState } from "react";
+
 import hamburgerMenu from "../../assets/burger-menu.svg";
 
 const Navbar: React.FC = () => {
@@ -26,7 +28,7 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="mr-4 mt-2 sm:mr-14">
+    <nav className="mt-2">
       <div>
         <div className="flex items-center justify-between">
           <div
@@ -43,23 +45,23 @@ const Navbar: React.FC = () => {
           </div>
           {isOpen && (
             <nav
-              className="absolute top-16 sm:top-5 right-0 bg-lightGrey rounded-sm flex-col"
+              className="absolute top-12 sm:top-2 right-0 bg-lightGrey flex-col border-4 border-red-700 rounded-lg"
               onMouseEnter={handleInteractionStart}
               onMouseLeave={handleInteractionEnd}
             >
               <ul>
                 <Link to="/">
-                  <li className="block px-4 py-2 text-gray-800 hover:text-blue-800 border-b-2 border-white">
+                  <li className="block px-4 py-2 text-gray-800 hover:text-red-700 hover:font-semibold border-b-2 border-white">
                     Add a recipe
                   </li>
                 </Link>
-                <Link to="/">
-                  <li className="block  px-4 py-2 text-gray-800 hover:text-blue-800 border-b-2 border-white">
+                <Link to="/meal-planner">
+                  <li className="block  px-4 py-2 text-gray-800 hover:text-red-700 hover:font-semibold border-b-2 border-white">
                     Plan my meals
                   </li>
                 </Link>
-                <Link to="/">
-                  <li className="block px-4 py-2 text-gray-800 hover:text-blue-800 border-b-2 border-white">
+                <Link to="/random-pick">
+                  <li className="block px-4 py-2 text-gray-800 hover:text-red-700 hover:font-semibold border-b-2 border-white">
                     Pick random recipe
                   </li>
                 </Link>

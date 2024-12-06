@@ -1,7 +1,15 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
+  "compilerOptions": {
+    "target": "es2020", // Or a higher ECMAScript version
+    "jsx": "react-jsx", // For React 17 or later, use "react-jsx"
+    "module": "esnext", // You can change this based on your bundler (e.g., webpack, rollup)
+    "moduleResolution": "node", // To handle module resolution in Node.js environment
+    "strict": true, // Enables strict type checking options
+    "esModuleInterop": true, // Ensures compatibility with CommonJS modules
+    "skipLibCheck": true, // Skips type checking of declaration files for faster compilation
+    "forceConsistentCasingInFileNames": true // Ensures consistent file casing across platforms
+  },
+  "include": [
+    "src/**/*" // Include all source files
   ]
 }

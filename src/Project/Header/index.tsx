@@ -1,24 +1,22 @@
 import { Link } from "react-router-dom";
-import searchMagnifier from "../assets/search.svg";
+
 import Navbar from "./Navbar";
+
+import searchMagnifier from "../assets/search.svg";
 
 const Header: React.FC = () => {
   const searchTerm = "";
   const setSearchTerm = () => {};
   const sortBy = "";
   const filter = "";
-  //   <Link to="/">
-  //   <div className="text-xl sm:text-xl ml-2 font-bold text-gray-800 font-sans">
-  //     React Components Archive
-  //   </div>
-  // </Link>
+
   return (
     <header
       role="header"
-      className="flex justify-between items-center sticky top-0 left-0 w-full h-20 bg-white z-2"
+      className="flex justify-between items-center sticky top-0 left-0 w-full h-16 bg-white z-10"
     >
       <Link to="/">
-        <div className="w-20 sm:w-[200px] text-xl sm:text-3xl font-bold text-gray-800 sm:ml-14 ml-4 font-custom">
+        <div className="w-20 sm:w-[200px] text-xl sm:text-3xl font-bold text-gray-800 font-custom">
           Recipe Book
         </div>
       </Link>
