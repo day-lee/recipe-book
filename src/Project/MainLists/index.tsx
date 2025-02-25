@@ -14,22 +14,40 @@ import {
   Recipe,
 } from "../../types";
 
+const defaultStatus = {
+  searchResult: false,
+  loading: true,
+  error: false,
+};
+
 const MainLists: React.FC = () => {
   const [recipeCards, setRecipeCards] = useState<Recipe[]>([]);
+  const [pageStatus, setPageStatus] = useState(defaultStatus);
+  const { searchResult, loading, error } = pageStatus;
   const { searchTerm } = useSearch();
 
   async function getMainRecipeCards(userId: number): Promise<Recipe[] | null> {
-    const { data, error } = await supabase.rpc("get_main_recipe_cards", {
-      input_user_id: userId,
-    } as GetMainRecipeCards);
-
-    if (error) {
+    try {
+      const { data, error } = await supabase.rpc("get_main_recipe_cards", {
+        input_user_id: userId,
+      } as GetMainRecipeCards);
+      setRecipeCards(data);
+      return data || null;
+    } catch (error) {
+      setPageStatus((prev) => ({
+        ...prev,
+        loading: false,
+        error: true,
+      }));
       console.error("Error retrieving recipes:", error);
       return null;
+    } finally {
+      setPageStatus((prev) => ({
+        ...prev,
+        loading: false,
+        error: false,
+      }));
     }
-    console.log(data);
-    setRecipeCards(data);
-    return data || null;
   }
 
   async function getMainTagFilterRecipeCards(tagId: number, userId: number) {
@@ -53,8 +71,19 @@ const MainLists: React.FC = () => {
       console.log("Recipe cards:", data);
       return data;
     } catch (error) {
+      setPageStatus((prev) => ({
+        ...prev,
+        loading: false,
+        error: true,
+      }));
       if (error instanceof Error)
         console.error("Error executing tag filtered function:", error.message);
+    } finally {
+      setPageStatus((prev) => ({
+        ...prev,
+        loading: false,
+        error: false,
+      }));
     }
   }
 
@@ -64,20 +93,35 @@ const MainLists: React.FC = () => {
         input_user_id: userId,
         input_term: inputTerm,
       } as GetMainSearchByTerm);
-      if (error) {
-        console.error("Error fetching search results:", error);
-        throw new Error(error.message);
-      }
+      setPageStatus((prev) => ({
+        ...prev,
+        loading: true,
+      }));
       setRecipeCards(data);
-      console.log("searchTerm: " + searchTerm);
-      console.log("Search Results:", data);
       if (data.length === 0) {
         console.log("no matching result");
+        setPageStatus((prev) => ({
+          ...prev,
+          searchResult: false,
+          loading: true,
+        }));
+        return null;
+      } else {
+        setPageStatus((prev) => ({
+          ...prev,
+          searchResult: true,
+          loading: true,
+        }));
+        return data;
       }
-      return data;
     } catch (error) {
       if (error instanceof Error)
         console.error("Error executing function:", error.message);
+    } finally {
+      setPageStatus((prev) => ({
+        ...prev,
+        loading: false,
+      }));
     }
   }
 
@@ -90,7 +134,11 @@ const MainLists: React.FC = () => {
     <>
       <Filter onFetchFiltereList={getMainTagFilterRecipeCards} />
       <div className="flex justify-center pt-6 pb-16 px-2 bg-lightGrey">
-        {recipeCards.length > 0 ? (
+        {loading ? (
+          <div>Loading...</div>
+        ) : error ? (
+          <div>Error occurred.</div>
+        ) : recipeCards.length > 0 ? (
           <ul className="grid items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {recipeCards.map((item: Recipe) => {
               return (
