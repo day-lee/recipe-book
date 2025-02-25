@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
+import { useSearch } from "../../context/searchProvider";
 import supabase from "../../supabaseClient";
 import Filter from "../Filter";
 import planner from "../assets/planner.svg";
@@ -14,7 +15,8 @@ import {
 } from "../../types";
 
 const MainLists: React.FC = () => {
-  const [recipeCards, setRecipeCards] = useState([]);
+  const [recipeCards, setRecipeCards] = useState<Recipe[]>([]);
+  const { searchTerm } = useSearch();
 
   async function getMainRecipeCards(userId: number): Promise<Recipe[] | null> {
     const { data, error } = await supabase.rpc("get_main_recipe_cards", {
@@ -62,13 +64,16 @@ const MainLists: React.FC = () => {
         input_user_id: userId,
         input_term: inputTerm,
       } as GetMainSearchByTerm);
-
       if (error) {
         console.error("Error fetching search results:", error);
         throw new Error(error.message);
       }
       setRecipeCards(data);
+      console.log("searchTerm: " + searchTerm);
       console.log("Search Results:", data);
+      if (data.length === 0) {
+        console.log("no matching result");
+      }
       return data;
     } catch (error) {
       if (error instanceof Error)
@@ -78,42 +83,49 @@ const MainLists: React.FC = () => {
 
   useEffect(() => {
     getMainRecipeCards(2);
-  }, []);
+    getMainSearchByTerm(2, searchTerm);
+  }, [searchTerm]);
 
   return (
     <>
       <Filter onFetchFiltereList={getMainTagFilterRecipeCards} />
       <div className="flex justify-center pt-6 pb-16 px-2 bg-lightGrey">
-        <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {recipeCards.map((item: Recipe) => {
-            return (
-              <li
-                className="relative w-full max-w-[288px] max-h-[380px] bg-white shadow-sm pb-4 hover:shadow-lg"
-                key={item.id}
-              >
-                <div>
-                  <img
-                    className="bg-white"
-                    src={item.img_link || unavailableImg}
-                    alt={item.recipe_name || "food"}
-                  />
-                </div>
-                <div className="m-2 pt-2 px-2  text-lg font-semibold">
-                  {item.recipe_name}
-                </div>
-                <div className="m-2 px-2 font-extralight text-sm">
-                  {item.duration} mins
-                </div>
-                <button
-                  className="absolute w-12 h-12 text-4xl bottom-16 right-2 text-white
-                 bg-red-700 rounded-lg border-4 border-white hover:bg-red-800"
+        {recipeCards.length > 0 ? (
+          <ul className="grid items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {recipeCards.map((item: Recipe) => {
+              return (
+                <li
+                  className="relative w-full max-w-[288px] max-h-[380px] bg-white shadow-sm pb-4 hover:shadow-lg"
+                  key={item.id}
                 >
-                  <span className="absolute bottom-[3px] left-[9px]"> +</span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
+                  <div>
+                    <img
+                      className="bg-white"
+                      src={item.img_link || unavailableImg}
+                      alt={item.recipe_name || "food"}
+                    />
+                  </div>
+                  <div className="m-2 pt-2 px-2 text-lg font-semibold">
+                    {item.recipe_name}
+                  </div>
+                  <div className="m-2 px-2 font-extralight text-sm">
+                    {item.duration} mins
+                  </div>
+                  <button
+                    className="absolute w-12 h-12 text-4xl bottom-16 right-2 text-white
+                 bg-red-700 rounded-lg border-4 border-white hover:bg-red-800"
+                  >
+                    <span className="absolute bottom-[3px] left-[9px]"> +</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <div className="font-semibold text-red-800">
+            No Matching Results Found
+          </div>
+        )}
         <Link to="/meal-planner">
           <div className="fixed bottom-4 sm:bottom-[10%] right-4">
             <button
